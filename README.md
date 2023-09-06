@@ -1,8 +1,42 @@
-# React + Vite
+# EmergentX Assesment Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend code for the assesment web application. Built using ReactJS only.
 
-Currently, two official plugins are available:
+## Vercel Deploy
+This website is currently hosted live on vercel and is accessible through the link provided next to the description of this repository.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Local Deploy
+1. Clone the git repository
+```
+git clone https://github.com/harmeet9013/EmergentX-assesment.git test-spa
+```
+2. Navigate to the folder
+```
+cd test-spa
+```
+3. Install dependencies
+```
+npm install
+```
+5. Edit .env file at the root
+* From :-
+```
+VITE_API_URL = https://emergent-x-assesment-server.vercel.app/api
+```
+* To :- 
+```
+VITE_API_URL = https://localhost:5000/api
+```
+4. Run the app
+```
+npm run dev
+```
+## Features
+* MaterialUI
+* Axios for handling HTTP requests
+* Cookie storage
+* System theme dependent for beautiful UI/UX
+
+## Source Code
+* [Frontend](https://github.com/harmeet9013/EmergentX-assesment)
+* [Backend](https://github.com/harmeet9013/EmergentX-assesment-server)
