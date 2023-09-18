@@ -28,7 +28,7 @@ export default function Header(props) {
                         WebkitTextFillColor: "transparent",
                     })}
                 >
-                    EmergentX Assesment
+                    TaskBox
                 </Typography>
                 <Typography
                     variant="body1"
