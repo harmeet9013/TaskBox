@@ -1,3 +1,5 @@
+import { HomeView } from "@/resources";
+
 export default function Home() {
-    return <>hi world</>;
+    return <HomeView />;
 }
