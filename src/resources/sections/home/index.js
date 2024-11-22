@@ -13,7 +13,10 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useForm } from "react-hook-form";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { enqueueSnackbar } from "notistack";
 import { ArrowBackIosRounded, AddRounded } from "@mui/icons-material";
 //
 import {
@@ -22,14 +25,20 @@ import {
     RHFTextField,
     FormProvider,
     useSettingsContext,
+    PUT_REQUEST,
+    DELETE_REQUEST,
 } from "@/resources";
-import { endpoints } from "@/config";
+import { endpoints, PATHS } from "@/config";
+import { DeleteRounded } from "@mui/icons-material";
 
 export const HomeView = () => {
+    const router = useRouter();
     const formMethods = useForm();
     const { session } = useSettingsContext();
 
     const [allTasks, setAllTasks] = useState(null);
+
+    console.log(allTasks);
 
     const onSubmit = formMethods["handleSubmit"](async (data) => {
         const response = await POST_REQUEST(endpoints["tasks"], data, {
@@ -37,24 +46,70 @@ export const HomeView = () => {
         });
 
         if (!!response.status) {
-            await fetchTasks();
+            setAllTasks(response?.data?.tasks);
+            // await fetchTasks();
             formMethods["reset"]();
+        } else {
+            enqueueSnackbar({
+                message: response?.message || "Unexpected Error",
+                variant: "error",
+            });
         }
-
-        console.log(response);
     });
+
+    const updateTask = async (data) => {
+        const response = await PUT_REQUEST(endpoints["tasks"], data, {
+            user: session?.user?.key,
+        });
+
+        if (!!response.status) {
+            setAllTasks((prevState) =>
+                prevState?.map((item) =>
+                    item?.key === response?.data?.key ? response?.data : item
+                )
+            );
+        } else {
+            enqueueSnackbar({
+                message: response?.message || "Unexpected Error",
+                variant: "error",
+            });
+        }
+    };
 
     const fetchTasks = async () => {
         const response = await GET_REQUEST(endpoints["tasks"], {
             user: session?.user?.key,
         });
 
-        console.log(response);
-
         if (response?.status) {
             // do something
-            setAllTasks([...response?.data]);
+            setAllTasks([...response?.data?.tasks]);
+        } else {
+            enqueueSnackbar({
+                message: response?.message || "Unexpected Error",
+                variant: "error",
+            });
         }
+    };
+
+    const handleDeleteTask = async (task_id) => {
+        const response = await DELETE_REQUEST(endpoints["tasks"], {
+            task: task_id,
+        });
+
+        if (!!response.status) {
+            setAllTasks(response?.data?.tasks);
+        } else {
+            enqueueSnackbar({
+                message: response?.message || "Unexpected Error",
+                variant: "error",
+            });
+        }
+    };
+
+    const handleLogout = () => {
+        signOut({ redirect: false });
+        router.push(PATHS["login"]);
     };
 
     useEffect(() => {
@@ -112,7 +167,10 @@ export const HomeView = () => {
                                     justifyContent="space-between"
                                 >
                                     <Tooltip title="logout">
-                                        <IconButton type="button">
+                                        <IconButton
+                                            type="button"
+                                            onClick={handleLogout}
+                                        >
                                             <ArrowBackIosRounded />
                                         </IconButton>
                                     </Tooltip>
@@ -170,14 +228,44 @@ export const HomeView = () => {
                                         width={1}
                                         key={index}
                                         direction="row"
-                                        justifyContent="flex-start"
                                         alignItems="center"
+                                        justifyContent="space-between"
                                     >
-                                        <Checkbox />
+                                        <Stack
+                                            width={1}
+                                            direction="row"
+                                            justifyContent="flex-start"
+                                            alignItems="center"
+                                        >
+                                            <Checkbox
+                                                checked={item?.is_done}
+                                                onChange={() => {
+                                                    updateTask({
+                                                        ...item,
+                                                        is_done: !item?.is_done,
+                                                    });
+                                                }}
+                                            />
 
-                                        <Typography variant="body1">
-                                            {item?.task}
-                                        </Typography>
+                                            <Typography variant="body1">
+                                                {item?.task}
+                                            </Typography>
+                                        </Stack>
+
+                                        <Tooltip
+                                            title="delete task"
+                                            disableInteractive
+                                        >
+                                            <IconButton
+                                                type="button"
+                                                color="error"
+                                                onClick={() =>
+                                                    handleDeleteTask(item?.key)
+                                                }
+                                            >
+                                                <DeleteRounded />
+                                            </IconButton>
+                                        </Tooltip>
                                     </Stack>
                                 ))}
                             </Stack>

@@ -1,11 +1,10 @@
-//
-import { uid } from "@/resources";
 import {
-    connectMongoDb,
-    errorResponse,
-    successResponse,
     userModel,
+    errorResponse,
+    connectMongoDb,
+    successResponse,
 } from "@/server";
+import { uid } from "@/resources";
 
 export const POST = async (request) => {
     const request_body = await request.json();

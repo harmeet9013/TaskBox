@@ -24,6 +24,11 @@ export default async function RootLayout({ children }) {
 
     if (header_url?.includes(PATHS["login"]) && !!session) {
         return redirect(PATHS["home"]);
+    } else if (
+        header_url?.substring(header_url?.lastIndexOf("/")) === PATHS["home"] &&
+        !session
+    ) {
+        return redirect(PATHS["login"]);
     }
 
     return (

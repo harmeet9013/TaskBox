@@ -2,7 +2,6 @@ export const successResponse = async (
     message = "Action performed",
     data = {}
 ) => {
-    console.log(message, data);
     return Response.json(
         { status: true, message: message, data: data },
         { status: 200 }

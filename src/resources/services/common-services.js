@@ -9,7 +9,6 @@ export const GET_REQUEST = async (url, params = {}) => {
             return response?.data;
         })
         .catch((error) => {
-            console.log(error);
             return {
                 status: false,
                 message:
@@ -38,7 +37,46 @@ export const POST_REQUEST = async (
             return response?.data;
         })
         .catch((error) => {
-            console.log(error);
+            return {
+                status: false,
+                message:
+                    error?.message ||
+                    error?.data?.message ||
+                    "Unexpected Error",
+                data: false,
+            };
+        });
+};
+
+export const PUT_REQUEST = async (url, data = {}, params = {}) => {
+    return await axios
+        .put(url, data, {
+            params: params,
+        })
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((error) => {
+            return {
+                status: false,
+                message:
+                    error?.message ||
+                    error?.data?.message ||
+                    "Unexpected Error",
+                data: false,
+            };
+        });
+};
+
+export const DELETE_REQUEST = async (url, params = {}) => {
+    return await axios
+        .delete(url, {
+            params: params,
+        })
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((error) => {
             return {
                 status: false,
                 message:
