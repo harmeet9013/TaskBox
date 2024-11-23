@@ -26,6 +26,17 @@ export const ThemeProvider = ({ children }) => {
         palette: {
             ...palette(mode, selectedPalette),
         },
+        transitions: {
+            duration: {
+                enteringScreen: 500,
+                leavingScreen: 500,
+                // standard: 4000,
+                // complex: 4000,
+                // short: 4000,
+                // shorter: 4000,
+                // shortest: 4000,
+            },
+        },
     });
 
     theme.components = ComponentsOverrides(theme);

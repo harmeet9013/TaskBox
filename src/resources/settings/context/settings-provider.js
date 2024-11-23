@@ -5,6 +5,7 @@ import { useMediaQuery } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 //
 import { settingsContext } from "./settings-context";
+import { getSession } from "next-auth/react";
 
 export const SettingsProvider = ({ children, session }) => {
     const isMobile = useMediaQuery("(max-width: 900px");
@@ -18,6 +19,11 @@ export const SettingsProvider = ({ children, session }) => {
         setMode(getCookie("theme") || systemTheme ? "dark" : "light");
     }, [systemTheme]);
 
+    const updateSession = async () => {
+        const newSession = await getSession();
+        setUpdatedSession(newSession);
+    };
+
     useEffect(() => {
         setUpdatedSession(session);
     }, [session]);
@@ -28,9 +34,10 @@ export const SettingsProvider = ({ children, session }) => {
             mode,
             setMode,
             session: updatedSession,
+            updateSession,
             selectedPalette,
         }),
-        [isMobile, mode, setMode, selectedPalette]
+        [isMobile, mode, setMode, updateSession, selectedPalette]
     );
 
     return (
