@@ -153,7 +153,7 @@ export const HomeView = () => {
                         </Typography>
                         !
                         <br />
-                        what's on your mind today?
+                        {"what's on your mind today?"}
                     </Typography>
 
                     <FormProvider
