@@ -1,11 +1,11 @@
 "use client";
 
 import { getCookie } from "cookies-next";
+import { getSession } from "next-auth/react";
 import { useMediaQuery } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 //
 import { settingsContext } from "./settings-context";
-import { getSession } from "next-auth/react";
 
 export const SettingsProvider = ({ children, session }) => {
     const isMobile = useMediaQuery("(max-width: 900px");

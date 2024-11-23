@@ -3,20 +3,19 @@
 import {
     Box,
     Card,
+    Fade,
     Slide,
     Stack,
     Tooltip,
     Divider,
+    useTheme,
+    Collapse,
     Checkbox,
-    Skeleton,
     Container,
     Typography,
     IconButton,
     CardContent,
     LinearProgress,
-    useTheme,
-    Fade,
-    Collapse,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useForm } from "react-hook-form";
@@ -25,19 +24,19 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { enqueueSnackbar } from "notistack";
 import { DeleteRounded } from "@mui/icons-material";
+import { TransitionGroup } from "react-transition-group";
 import { ArrowBackIosRounded, AddRounded } from "@mui/icons-material";
 //
 import {
     GET_REQUEST,
-    POST_REQUEST,
-    RHFTextField,
-    FormProvider,
-    useSettingsContext,
     PUT_REQUEST,
+    FormProvider,
+    RHFTextField,
+    POST_REQUEST,
     DELETE_REQUEST,
+    useSettingsContext,
 } from "@/resources";
 import { endpoints, PATHS } from "@/config";
-import { TransitionGroup } from "react-transition-group";
 
 export const HomeView = () => {
     const theme = useTheme();
@@ -47,6 +46,7 @@ export const HomeView = () => {
 
     const [allTasks, setAllTasks] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
+    const [isUpdatingDeleting, setIsUpdatingDeleting] = useState(false);
 
     const handleLogout = () => {
         signOut({ redirect: false });
@@ -91,7 +91,7 @@ export const HomeView = () => {
     });
 
     const handleUpdateTask = async (data) => {
-        setIsFetching(true);
+        setIsUpdatingDeleting(true);
 
         const response = await PUT_REQUEST(endpoints["tasks"], data, {
             user: session?.user?.key,
@@ -110,10 +110,12 @@ export const HomeView = () => {
             });
         }
 
-        setIsFetching(false);
+        setIsUpdatingDeleting(false);
     };
 
     const handleDeleteTask = async (task_id) => {
+        setIsUpdatingDeleting(true);
+
         const response = await DELETE_REQUEST(endpoints["tasks"], {
             task: task_id,
         });
@@ -126,6 +128,8 @@ export const HomeView = () => {
                 variant: "error",
             });
         }
+
+        setIsUpdatingDeleting(false);
     };
 
     useEffect(() => {
@@ -179,7 +183,9 @@ export const HomeView = () => {
                                         disabled={
                                             formMethods["formState"][
                                                 "isSubmitting"
-                                            ] || isFetching
+                                            ] ||
+                                            isFetching ||
+                                            isUpdatingDeleting
                                         }
                                     />
 
@@ -195,7 +201,9 @@ export const HomeView = () => {
                                                 disabled={
                                                     formMethods["formState"][
                                                         "isSubmitting"
-                                                    ] || isFetching
+                                                    ] ||
+                                                    isFetching ||
+                                                    isUpdatingDeleting
                                                 }
                                                 onClick={handleLogout}
                                                 sx={{
@@ -210,7 +218,9 @@ export const HomeView = () => {
                                             loading={
                                                 formMethods["formState"][
                                                     "isSubmitting"
-                                                ] || isFetching
+                                                ] ||
+                                                isFetching ||
+                                                isUpdatingDeleting
                                             }
                                             type="submit"
                                             color="tertiary"
@@ -334,6 +344,9 @@ export const HomeView = () => {
                                                                                 }
                                                                             );
                                                                         }}
+                                                                        disabled={
+                                                                            !!isUpdatingDeleting
+                                                                        }
                                                                     />
 
                                                                     <Typography variant="body1">
@@ -354,6 +367,9 @@ export const HomeView = () => {
                                                                             handleDeleteTask(
                                                                                 item?.key
                                                                             )
+                                                                        }
+                                                                        disabled={
+                                                                            !!isUpdatingDeleting
                                                                         }
                                                                     >
                                                                         <DeleteRounded />
